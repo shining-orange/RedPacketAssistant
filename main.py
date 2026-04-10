@@ -13,6 +13,7 @@
 import os
 import sys
 import time
+import random
 import datetime
 import ctypes
 from ctypes import wintypes
@@ -408,14 +409,16 @@ class RedPacketGrabber:
                     self._record_click(sx, sy)
                     return False
 
-                if config.GRAB_DELAY > 0:
-                    time.sleep(config.GRAB_DELAY)
+                if config.CLICK_DELAY_MAX > 0:
+                    delay = random.uniform(config.CLICK_DELAY_MIN, config.CLICK_DELAY_MAX)
+                    log(f"模拟反应延迟 {delay:.2f}s")
+                    time.sleep(delay)
 
                 # 第1步: 点击红包卡片
                 self.click((sx, sy))
                 self._record_click(sx, sy)
                 log("已点击红包卡片，等待弹窗...")
-                time.sleep(0.8)
+                time.sleep(random.uniform(config.POPUP_WAIT_MIN, config.POPUP_WAIT_MAX))
 
                 # 第2步: 截全屏查找并点击"开"按钮
                 # 弹窗可能超出微信窗口范围，必须截全屏
@@ -425,12 +428,14 @@ class RedPacketGrabber:
                 open_pos = self.detect_open_button(fullscreen)
                 if open_pos:
                     # open_pos 已经是全屏坐标，直接点击
-                    log(f"点击开按钮 @ ({open_pos[0]}, {open_pos[1]})")
+                    open_delay = random.uniform(config.OPEN_DELAY_MIN, config.OPEN_DELAY_MAX)
+                    log(f"点击开按钮 @ ({open_pos[0]}, {open_pos[1]}) 延迟 {open_delay:.2f}s")
+                    time.sleep(open_delay)
                     self.click(open_pos)
                     self.grab_count += 1
                     beep_alert()
                     log(f"抢到红包！第 {self.grab_count} 个")
-                    time.sleep(1.0)
+                    time.sleep(random.uniform(config.GRAB_DONE_WAIT_MIN, config.GRAB_DONE_WAIT_MAX))
                 else:
                     log("未找到开按钮（红包可能已被领取）")
 
@@ -458,24 +463,24 @@ class RedPacketGrabber:
 
     def _close_dialog(self):
         """关闭弹窗（多次ESC确保关闭）"""
-        time.sleep(0.3)
+        time.sleep(random.uniform(config.CLOSE_PRE_MIN, config.CLOSE_PRE_MAX))
         pyautogui.press('escape')
-        time.sleep(0.2)
+        time.sleep(random.uniform(config.CLOSE_ESC_MIN, config.CLOSE_ESC_MAX))
         pyautogui.press('escape')
-        time.sleep(0.2)
+        time.sleep(random.uniform(config.CLOSE_POST_MIN, config.CLOSE_POST_MAX))
 
     def _auto_reply(self):
         """自动回复感谢语（实验性）"""
         try:
-            time.sleep(0.3)
+            time.sleep(random.uniform(config.REPLY_PRE_MIN, config.REPLY_PRE_MAX))
             # 点击聊天输入框（通常在窗口底部中间）
             w = self.rect[2] - self.rect[0]
             h = self.rect[3] - self.rect[1]
             input_x = self.rect[0] + int(w * 0.6)
             input_y = self.rect[3] - 50
             self.click((input_x, input_y))
-            time.sleep(0.2)
-            pyautogui.typewrite(config.THANKS_TEXT, interval=0.02)
+            time.sleep(random.uniform(config.REPLY_TYPE_PRE_MIN, config.REPLY_TYPE_PRE_MAX))
+            pyautogui.typewrite(config.THANKS_TEXT, interval=random.uniform(config.REPLY_CHAR_INTERVAL_MIN, config.REPLY_CHAR_INTERVAL_MAX))
             pyautogui.press('enter')
             log(f"已回复: {config.THANKS_TEXT}")
         except Exception as e:
@@ -489,7 +494,8 @@ class RedPacketGrabber:
         log("=" * 50)
         log("  微信红包助手 v2.0 (截图检测版)")
         log(f"  自动抢: {'开' if config.AUTO_GRAB else '关（仅提醒）'}")
-        log(f"  间隔: {config.CHECK_INTERVAL}s | 声音: {'开' if config.SOUND_ALERT else '关'}")
+        log(f"  间隔: {config.CHECK_INTERVAL}s ±{config.SCAN_JITTER}s | 声音: {'开' if config.SOUND_ALERT else '关'}")
+        log(f"  点击延迟: {config.CLICK_DELAY_MIN}-{config.CLICK_DELAY_MAX}s | 开按钮延迟: {config.OPEN_DELAY_MIN}-{config.OPEN_DELAY_MAX}s")
         if config.DEBUG_MODE:
             log("  调试模式: 开启 (截图保存到 debug/)")
         log("=" * 50)
@@ -527,7 +533,8 @@ class RedPacketGrabber:
                     log(f"监控中... 已扫描 {scan_count} 次，已抢 {self.grab_count} 个")
 
                 self.try_grab_one()
-                time.sleep(config.CHECK_INTERVAL)
+                jitter = random.uniform(0, config.SCAN_JITTER) if config.SCAN_JITTER > 0 else 0
+                time.sleep(config.CHECK_INTERVAL + jitter)
 
             except KeyboardInterrupt:
                 break

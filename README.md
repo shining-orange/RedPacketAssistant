@@ -53,14 +53,31 @@ python main.py
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
 | `CHECK_INTERVAL` | `0.3` | 检测间隔（秒） |
+| `SCAN_JITTER` | `0.10` | 检测间隔随机抖动（秒），实际 = `CHECK_INTERVAL` + random(0, `SCAN_JITTER`) |
 | `AUTO_GRAB` | `True` | 是否自动抢红包。`False` 则只提醒不点击 |
 | `AUTO_REPLY` | `False` | 抢到后是否自动回复感谢语 |
 | `THANKS_TEXT` | `"谢谢老板！！！"` | 自动回复的内容 |
 | `SOUND_ALERT` | `True` | 抢到红包时是否发出蜂鸣提示音 |
-| `GRAB_DELAY` | `0.0` | 模拟人类反应延迟（秒） |
 | `MAX_GRAB_COUNT` | `0` | 最大抢红包次数，`0` 表示不限 |
 | `VERBOSE_LOG` | `True` | 输出详细日志 |
 | `DEBUG_MODE` | `False` | 调试模式，保存截图到 `debug/` 目录 |
+
+### 随机延迟配置
+
+所有延迟均为 `random(MIN, MAX)` 范围内的随机值，模拟真实操作以规避检测。将同一组 MIN/MAX 设为相同值可关闭随机性。
+
+| 配置项 | 默认值 (秒) | 说明 |
+|--------|-------------|------|
+| `CLICK_DELAY_MIN/MAX` | 0.05 ~ 0.15 | 点击红包卡片前的反应延迟 |
+| `POPUP_WAIT_MIN/MAX` | 0.50 ~ 0.65 | 点击卡片后等待弹窗弹出 |
+| `OPEN_DELAY_MIN/MAX` | 0.05 ~ 0.15 | 点击"开"按钮前的延迟 |
+| `GRAB_DONE_WAIT_MIN/MAX` | 0.30 ~ 0.50 | 抢到红包后的恢复等待 |
+| `CLOSE_PRE_MIN/MAX` | 0.10 ~ 0.20 | 关弹窗：第 1 次 ESC 前 |
+| `CLOSE_ESC_MIN/MAX` | 0.08 ~ 0.18 | 关弹窗：两次 ESC 之间 |
+| `CLOSE_POST_MIN/MAX` | 0.08 ~ 0.15 | 关弹窗：第 2 次 ESC 后 |
+| `REPLY_PRE_MIN/MAX` | 0.10 ~ 0.20 | 自动回复：点击输入框前 |
+| `REPLY_TYPE_PRE_MIN/MAX` | 0.05 ~ 0.15 | 自动回复：输入框获焦后到打字前 |
+| `REPLY_CHAR_INTERVAL_MIN/MAX` | 0.02 ~ 0.06 | 自动回复：每个字符的打字间隔 |
 
 ### 颜色检测参数
 

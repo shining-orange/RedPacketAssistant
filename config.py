@@ -4,6 +4,8 @@
 
 # 检测间隔（秒）
 CHECK_INTERVAL = 0.3
+# 检测间隔随机抖动范围（秒），实际间隔 = CHECK_INTERVAL + random(0, SCAN_JITTER)
+SCAN_JITTER = 0.10
 
 # 是否自动抢红包（False 则只提醒不点击）
 AUTO_GRAB = True
@@ -15,8 +17,43 @@ THANKS_TEXT = "谢谢老板！！！"
 # 声音提醒
 SOUND_ALERT = True
 
-# 模拟人类反应延迟（秒），0 = 不延迟
-GRAB_DELAY = 0.0
+# 模拟人类反应延迟范围（秒），实际延迟 = random(CLICK_DELAY_MIN, CLICK_DELAY_MAX)
+CLICK_DELAY_MIN = 0.05
+CLICK_DELAY_MAX = 0.15
+
+# 点击红包卡片后等待弹窗弹出的延迟范围（秒）
+POPUP_WAIT_MIN = 0.50
+POPUP_WAIT_MAX = 0.65
+
+# 点击"开"按钮前的额外随机延迟范围（秒）
+OPEN_DELAY_MIN = 0.05
+OPEN_DELAY_MAX = 0.15
+
+# 抢到红包后恢复等待的延迟范围（秒）
+GRAB_DONE_WAIT_MIN = 0.30
+GRAB_DONE_WAIT_MAX = 0.50
+
+# 关闭弹窗：第1次ESC前的延迟范围（秒）
+CLOSE_PRE_MIN = 0.10
+CLOSE_PRE_MAX = 0.20
+
+# 关闭弹窗：两次ESC之间的延迟范围（秒）
+CLOSE_ESC_MIN = 0.08
+CLOSE_ESC_MAX = 0.18
+CLOSE_POST_MIN = 0.08
+CLOSE_POST_MAX = 0.15
+
+# 自动回复：点击输入框前的延迟范围（秒）
+REPLY_PRE_MIN = 0.10
+REPLY_PRE_MAX = 0.20
+
+# 自动回复：点击输入框后、打字前的延迟范围（秒）
+REPLY_TYPE_PRE_MIN = 0.05
+REPLY_TYPE_PRE_MAX = 0.15
+
+# 自动回复：每个字符的打字间隔范围（秒）
+REPLY_CHAR_INTERVAL_MIN = 0.02
+REPLY_CHAR_INTERVAL_MAX = 0.06
 
 # 最大抢红包次数（0 = 不限）
 MAX_GRAB_COUNT = 0
